@@ -1,0 +1,56 @@
+Show unique birth years from the patients table and sort by ascending:
+select distinct year(birth_date)
+FROM patients
+order by year(birth_date) asc
+Show unique first names from the patients table which only occurs once in the list:
+select distinct first_name
+from patients
+group by first_name
+having count(*)=1
+Show patient_id and first_name from patients where their first_name start and ends with 's' and is at least 6 characters long:
+select patient_id, first_name
+from patients
+where first_name like 's%'
+and	  first_name like '%s'
+and	  len(first_name)>=6 
+Show patient_id, first_name, last_name from patients whos diagnosis is 'Dementia'.
+select patients.patient_id, patients.first_name, patients.last_name
+from patients, admissions
+where patients.patient_id=admissions.patient_id
+and	admissions.diagnosis='Dementia'
+Display every patient's first_name. Order the list by the length of each name and then by alphabetically.
+select first_name
+from patients
+order by len(first_name), first_name
+Show the total amount of male patients and the total amount of female patients in the patients table. Display the two results in the same row.
+SELECT 
+count(
+ CASE WHEN gender='M' THEN 1 END
+) as TOTAL_MALES,
+count(CASE WHEN gender='F' THEN 1 END) as TOTAL_FEMALES
+FROM
+patients
+Show first and last name, allergies from patients which have allergies to either 'Penicillin' or 'Morphine'. Show results ordered ascending by allergies then by first_name then by last_name
+SELECT first_name,last_name,allergies
+FROM patients
+where allergies = 'Penicillin'
+OR allergies = 'Morphine'
+order by allergies,first_name,last_name
+Show patient_id, diagnosis from admissions. Find patients admitted multiple times for the same diagnosis.
+SELECT
+  patient_id,
+  diagnosis
+FROM admissions
+GROUP BY
+  patient_id,
+  diagnosis
+HAVING COUNT(*) > 1;
+Show the city and the total number of patients in the city. Order from most to least patients and then by city name ascending
+SELECT city, count(patient_id)
+from patients
+group by city
+order by count(patient_id) desc, city asc
+Show first name, last name and role of every person that is either patient or doctor. The roles are either "Patient" or "Doctor"
+SELECT first_name,last_name, 'Patient' as role From patients
+union ALL
+SELECT first_name,last_name, 'Doctor' as role From doctors
